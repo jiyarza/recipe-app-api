@@ -1,0 +1,31 @@
+---    
+# the three --- at the top indicate this is a yml file
+#
+# This is a github actions yml file
+# must be inside .github/workflows folder
+# .github folder has to be at the root of the project
+
+name: Checks
+
+# trigger, this means actions in this file are triggerd on push
+on: [push]
+
+jobs:
+    test-lint:
+        name: Test and Lint
+        runs-on: ubuntu-20.04
+        steps:
+            -   name: Login to Docker Hub
+                uses: docker/login-action@v1
+                with:
+                    username: ${{ secrets.DOCKERHUB_USER }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+            -   name: Checkout
+                uses: actions/checkout@v2
+            -   name: Test
+                run: docker-compose run --rm app sh -c "python manage.py test"
+            -   name: Lint
+                run: docker-compose run --rm app sh -c "flake8" 
+            
+                  
+        
